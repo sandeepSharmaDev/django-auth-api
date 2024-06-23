@@ -3,10 +3,13 @@ from rest_framework import status
 from rest_framework.views import APIView
 from account.serializers import UserRegistrationSerializer
 from utils.api_response import ApiResponse
-from utils.constants import SUCCESS_USER_REGISTERED,INVALID_PASSWORD,USER_LOGIN_SUCCESS
+from utils.constants import SUCCESS_USER_REGISTERED,INVALID_PASSWORD,USER_LOGIN_SUCCESS,USER_PROFILE_SUCCESS
 from account.serializers import UserLoginSerializer
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
+from account.serializers import UserProfileSerializer
+from rest_framework.permissions import IsAuthenticated
+
 
 # generate token manually 
 def get_tokens_for_user(user):
@@ -63,4 +66,14 @@ class UserLoginView(APIView):
 
         return ApiResponse.error(message=serializer.errors,
                                 status_code=status.HTTP_400_BAD_REQUEST)
+    
 
+
+class UserProfileView(APIView):
+    permission_classes = [IsAuthenticated]  # used for authentication , without token not allowed.
+    def get(self, request, format=None):
+        serializer = UserProfileSerializer(request.user)
+        return ApiResponse.success(
+                message=USER_PROFILE_SUCCESS,
+                data=serializer.data,
+                status_code=status.HTTP_200_OK)
