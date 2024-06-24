@@ -3,11 +3,11 @@ from rest_framework import status
 from rest_framework.views import APIView
 from account.serializers import UserRegistrationSerializer
 from utils.api_response import ApiResponse
-from utils.constants import SUCCESS_USER_REGISTERED,INVALID_PASSWORD,USER_LOGIN_SUCCESS,USER_PROFILE_SUCCESS,PASSWORD_CHANGE
+from utils.constants import SUCCESS_USER_REGISTERED,INVALID_PASSWORD,USER_LOGIN_SUCCESS,USER_PROFILE_SUCCESS,PASSWORD_CHANGE,PASSWORD_RESET
 from account.serializers import UserLoginSerializer
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
-from account.serializers import UserProfileSerializer, UserChangePasswordSerializer
+from account.serializers import UserProfileSerializer, UserChangePasswordSerializer,SendPasswordResetEmailSerializer
 from rest_framework.permissions import IsAuthenticated
 
 
@@ -91,3 +91,18 @@ class UserChangePasswordView(APIView):
         return ApiResponse.error(
             message=serializer.errors,
             status_code=status.HTTP_400_BAD_REQUEST)
+    
+
+
+class SendPasswordResetEmailView(APIView):
+    def post(self, request, format=None):
+        serializer = SendPasswordResetEmailSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            return ApiResponse.success(
+                message=PASSWORD_RESET,
+                data=serializer.data,
+                status_code=status.HTTP_200_OK)
+        return ApiResponse.error(
+            message=serializer.errors,
+            status_code=status.HTTP_400_BAD_REQUEST
+        )

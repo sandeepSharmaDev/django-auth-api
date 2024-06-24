@@ -7,3 +7,5 @@ INVALID_PASSWORD = "Invalid email or password."
 USER_LOGIN_SUCCESS = "Login successful"
 USER_PROFILE_SUCCESS = "Profile Loaded successful"
 PASSWORD_CHANGE="Password changed successfully"
+PASSWORD_RESET="Password reset successfully. Please check your email."
+

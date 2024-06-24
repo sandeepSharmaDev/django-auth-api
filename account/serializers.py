@@ -1,6 +1,10 @@
 from rest_framework import serializers
 from account.models import User
 from utils.constants import PASSWORD_NOT_MATCHED
+#for the send password reset link in email
+from django.utils.encoding import smart_str,force_bytes,DjangoUnicodeDecodeError
+from django.utils.http import urlsafe_base64_encode,urlsafe_base64_decode
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
     password2 = serializers.CharField(style={'input_type': 'password'}
@@ -58,3 +62,29 @@ class UserChangePasswordSerializer(serializers.Serializer):
         user.set_password(password)
         user.save()
         return attrs
+    
+
+class SendPasswordResetEmailSerializer(serializers.Serializer):
+    email = serializers.EmailField(max_length=255)
+    class Meta:
+        fields = ['email']
+
+    def validate(self, attrs):
+        email = attrs.get('email')
+        try:
+            user = User.objects.get(email=email)
+            uid = urlsafe_base64_encode(force_bytes(user.id))
+            print("uid: %s" % uid)
+            token = PasswordResetTokenGenerator().make_token(user)
+            print("token: %s" % token)
+            link = f"https://localhost:3000/api/v1/users/reset_password/{uid}/{token}"
+            print("link: %s" % link)
+            # Here, you can send the email containing the reset link to the user
+            return attrs
+        except User.DoesNotExist:
+            raise serializers.ValidationError(
+                "User with this email does not exist."
+            )
+
+
+
