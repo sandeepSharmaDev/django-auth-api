@@ -79,12 +79,44 @@ class SendPasswordResetEmailSerializer(serializers.Serializer):
             print("token: %s" % token)
             link = f"https://localhost:3000/api/v1/users/reset_password/{uid}/{token}"
             print("link: %s" % link)
-            # Here, you can send the email containing the reset link to the user
+            # Here, you can send the email containing the reset link to the user-----------
             return attrs
         except User.DoesNotExist:
             raise serializers.ValidationError(
                 "User with this email does not exist."
             )
+        
+
+class UserPasswordResetSerializer(serializers.Serializer):
+    password = serializers.CharField(max_length=255, style={'input_type': 'password'}, write_only=True)
+    password2 = serializers.CharField(max_length=255, style={'input_type': 'password'}, write_only=True)
+
+    def validate(self, attrs):
+        password = attrs.get('password')
+        password2 = attrs.get('password2')
+        
+        if password != password2:
+            raise serializers.ValidationError("Passwords do not match.")
+        
+        uid = self.context.get('uid')
+        token = self.context.get('token')
+        
+        try:
+            id = smart_str(urlsafe_base64_decode(uid))
+            user = User.objects.get(id=id)
+        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+            raise serializers.ValidationError("Invalid user.")
+        
+        if not PasswordResetTokenGenerator().check_token(user, token):
+            raise serializers.ValidationError("The reset link is invalid, please request a new one.")
+        
+        user.set_password(password)
+        user.save()
+        return attrs
+
+    class Meta:
+        fields = ['password', 'password2']
+
 
 
 
