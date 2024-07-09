@@ -9,7 +9,7 @@ from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 from account.serializers import UserProfileSerializer, UserChangePasswordSerializer,SendPasswordResetEmailSerializer,UserPasswordResetSerializer
 from rest_framework.permissions import IsAuthenticated
-
+ 
 
 # generate token manually 
 def get_tokens_for_user(user):
