@@ -1,24 +1,2 @@
 # django-signup_api_self
-# django-auth-api
-# django-auth-api
-# django-auth-api
-# django-auth-api
-# django-auth-api
-# django-auth-api
-# django-auth-api
-# django-auth-api
-# django-auth-api
-# django-auth-api
-# django-auth-api
-# django-auth-api
-# django-auth-api
-# django-auth-api
-# django-auth-api
-# django-auth-api
-# django-auth-api
-# django-auth-api
-# django-auth-api
-# django-auth-api
-# django-auth-api
-# django-auth-api
-# django-auth-api
+
